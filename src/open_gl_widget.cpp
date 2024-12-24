@@ -185,7 +185,7 @@ void OpenGlWidget::update_scene()
   glViewport(0, 0, m_width, m_height);
 
   QVector3D color;
-  double r, g, b;
+  float r, g, b;
   GLfloat bkColor[4];
   glGetFloatv(GL_COLOR_CLEAR_VALUE, bkColor);
 
@@ -738,16 +738,13 @@ void OpenGlWidget::mousePressEvent(QMouseEvent *event)
   float lightWidth = (float)laigter.width() * 0.25;
   float lightHeight = (float)laigter.height() * 0.25;
 
-  if (event->buttons() & (Qt::LeftButton | Qt::MidButton))
+  if (event->buttons() & (Qt::LeftButton | Qt::MiddleButton))
   {
     if (addLight)
     {
       set_add_light(true);
       return;
     }
-    /* Loops for selecting textues */
-    if (QApplication::keyboardModifiers() != Qt::CTRL && QApplication::keyboardModifiers() != Qt::SHIFT)
-      set_all_processors_selected(false);
 
     bool selected = false;
     /* We first check if we selected a light, and if not, we scan if we
@@ -768,6 +765,7 @@ void OpenGlWidget::mousePressEvent(QMouseEvent *event)
     }
     else
     {
+      /* Loops for selecting textues */
       foreach (ImageProcessor *p, processorList)
       {
         currentLightList = p->get_light_list_ptr();
@@ -790,6 +788,9 @@ void OpenGlWidget::mousePressEvent(QMouseEvent *event)
 
     if (!lightSelected)
     {
+      if (QApplication::keyboardModifiers() != Qt::CTRL && QApplication::keyboardModifiers() != Qt::SHIFT)
+        set_all_processors_selected(false);
+
       set_enabled_light_controls(false);
       for (int i = processorList.count() - 1; i >= 0; i--)
       {
@@ -961,7 +962,7 @@ void OpenGlWidget::mouseMoveEvent(QMouseEvent *event)
     }
     need_to_update = true;
   }
-  else if (event->buttons() & Qt::MidButton)
+  else if (event->buttons() & Qt::MiddleButton)
   {
     origin += QVector3D(global_mouse_last_position - global_mouse_press_position);
     updateView();
@@ -1298,7 +1299,7 @@ QImage OpenGlWidget::calculate_preview(bool fullPreview)
     glClear(GL_COLOR_BUFFER_BIT);
 
     QVector3D color;
-    double r, g, b;
+    float r, g, b;
     GLfloat bkColor[4];
     glGetFloatv(GL_COLOR_CLEAR_VALUE, bkColor);
 
@@ -1484,7 +1485,7 @@ QImage OpenGlWidget::get_preview(bool fullPreview, bool autosave,
 
 void OpenGlWidget::apply_light_params(QMatrix4x4 projection, QMatrix4x4 view)
 {
-  double r, g, b;
+  float r, g, b;
   QVector3D color;
 
   QList<LightSource *> currentLightList;
